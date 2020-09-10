@@ -13,13 +13,17 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import no.ntnu.tollefsen.auth.AuthenticationService;
+import no.ntnu.tollefsen.auth.User;
 
 /**
  *
@@ -47,9 +51,33 @@ public class FantService {
      */
     @GET
     @Path("items")
-    @RolesAllowed({Group.USER})
-    @Produces(MediaType.APPLICATION_JSON)
     public List<Item> getAllItems() {
         return em.createNamedQuery(Item.FIND_ALL_ITEMS, Item.class).getResultList();
-    }   
+    }
+    
+    @POST
+    @Path("additem")
+    @RolesAllowed({Group.USER})
+    public Response addItem(
+            @FormParam("item") String item,
+            @FormParam("description") String description,
+            @FormParam("price") int price) {
+
+        User user = this.getCurrentUser();
+        Item newItem = new Item();
+
+        newItem.setItemOwner(user);
+        newItem.setItem(item);
+        newItem.setDescription(description);
+        newItem.setPrice(price);
+
+        em.persist(newItem);
+
+        return Response.ok().build();
+    }
+    
+    private User getCurrentUser() {
+        return em.find(User.class, securityContext.getUserPrincipal().getName());
+    }
+    
 }

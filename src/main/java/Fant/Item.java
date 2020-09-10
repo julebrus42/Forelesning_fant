@@ -26,31 +26,29 @@ import no.ntnu.tollefsen.auth.User;
  */
 
 @Entity
-@Table(name = "items")
+@Table(name = "Items")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-@NamedQuery(name = FIND_ALL_ITEMS, query = "select i from items")
+@NoArgsConstructor
+@NamedQuery(name = FIND_ALL_ITEMS, query = "select i from Item i")
 public class Item implements Serializable {
-    
-    public static final String FIND_ALL_ITEMS = "ITEM.findAllItems";
+
+    public static final String FIND_ALL_ITEMS = "Item.findAllItems";
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-    
-    private String title;
+    private Long itemid;
+
+    private String item;
     private String description;
-    private String price;
-    
-    
+    private int price;
+
     @ManyToOne
     @JoinColumn(nullable = false)
-    private User itemsOwner;
+    private User itemOwner;
     
     @ManyToOne
     private User itemBuyer;
-    
-    
-    
+
 }
+
