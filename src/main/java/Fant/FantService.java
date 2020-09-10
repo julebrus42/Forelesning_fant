@@ -13,18 +13,20 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import no.ntnu.tollefsen.auth.AuthenticationService;
 import no.ntnu.tollefsen.auth.User;
-
 /**
  *
  * @author danie
@@ -38,6 +40,8 @@ public class FantService {
     
     @Inject
     AuthenticationService authenticationService;
+    
+    @Inject MailService mailService;
     
     @Context
     SecurityContext securityContext;
@@ -79,5 +83,55 @@ public class FantService {
     private User getCurrentUser() {
         return em.find(User.class, securityContext.getUserPrincipal().getName());
     }
+    
+    @DELETE
+    @Path("delete")
+    @RolesAllowed({Group.USER})
+    public Response deleteItem (
+            @QueryParam("itemid") long itemid) {
+        Item item = em.find(Item.class, itemid);
+        User user = getCurrentUser();
+        
+        if (item.getItemOwner().getUserid().equals(user.getUserid())) {
+            if (item != null) {
+                    em.remove(item);
+                    return Response.ok(item).build();
+                } else {
+            return Response.ok("No item was found that could be deleted").build(); }
+         
+        } else {
+            return Response.ok("The account logged in does not match the items owner. Please try logging in with another account!").build();
+        }
+        
+    }
+    
+//    @GET
+//    @Path("send")
+//    public Response send() {
+//        mailService.sendEmail("daniel.iversen@live.no", "test", "test");
+//        return Response.ok().build();
+//    }
+    
+    @PUT
+    @Path("buy")
+    @RolesAllowed({Group.USER})
+    public Response buyItem (
+            @QueryParam("itemid") long itemid) {
+        Item item = em.find(Item.class, itemid);
+        User buyer = getCurrentUser();
+        
+        if (item != null) {
+            if(item.getItemBuyer() == null) {
+                item.setItemBuyer(buyer);
+                mailService.sendEmail(item.getItemOwner().getEmail(), "Your Item has been sold!", "The item was bought by " + item.getItemBuyer().getUserid());
+
+                return Response.ok("The item is now bought").build();
+            } else {
+                return Response.ok("The item is already bought").build();
+            }
+        }
+        
+        return Response.ok("OPS!!! Something went wrong").build();
+    }   
     
 }

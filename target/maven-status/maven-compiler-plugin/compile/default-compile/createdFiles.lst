@@ -2,7 +2,9 @@ no\ntnu\tollefsen\auth\AuthRunOnStartup.class
 Fant\Item.class
 no\ntnu\tollefsen\auth\User.class
 no\ntnu\tollefsen\auth\User$State.class
+Fant\MailService.class
 com\mycompany\forelesning_fant\resources\DatasourceProducer.class
+Fant\MailService$1.class
 Fant\FantService.class
 no\ntnu\tollefsen\auth\KeyService.class
 com\mycompany\forelesning_fant\resources\SecurityConfiguration.class
