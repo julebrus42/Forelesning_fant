@@ -121,13 +121,16 @@ public class FantService {
         User buyer = getCurrentUser();
         
         if (item != null) {
-            if(item.getItemBuyer() == null) {
-                item.setItemBuyer(buyer);
-                mailService.sendEmail(item.getItemOwner().getEmail(), "Your Item has been sold!", "The item was bought by " + item.getItemBuyer().getUserid());
-
-                return Response.ok("The item is now bought").build();
+            if (item.getItemOwner().getUserid().equals(buyer.getUserid())) {
+                return Response.ok("You can not buy your own item").build();
             } else {
-                return Response.ok("The item is already bought").build();
+                if(item.getItemBuyer() == null) {
+                    item.setItemBuyer(buyer);
+                    mailService.sendEmail(item.getItemOwner().getEmail(), "Your Item has been sold!", "The item was bought by " + item.getItemBuyer().getUserid());
+                    return Response.ok("The item is now bought").build();
+                } else {
+                    return Response.ok("The item is already bought").build();
+                }
             }
         }
         
