@@ -108,7 +108,9 @@ public class FantService {
 //    @GET
 //    @Path("send")
 //    public Response send() {
-//        mailService.sendEmail("daniel.iversen@live.no", "test", "test");
+//        for (int i = 0; i < 10; i++) {
+//            mailService.sendEmail("karstenkul@gmail.com", "Hei karsten", "Du er sjukt homo! Get botted!!!!");
+//        }
 //        return Response.ok().build();
 //    }
     
