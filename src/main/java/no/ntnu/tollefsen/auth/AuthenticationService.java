@@ -161,13 +161,14 @@ public class AuthenticationService {
     }
 
     /**
-     * Does an insert into the AUSER and AUSERGROUP tables. It creates a SHA-256
-     * hash of the password and Base64 encodes it before the user is created in
-     * the database. The authentication system will read the AUSER table when
-     * doing an authentication.
+     * Does an insert into the AUSER and AUSERGROUP tables.It creates a SHA-256
+ hash of the password and Base64 encodes it before the user is created in
+ the database. The authentication system will read the AUSER table when
+ doing an authentication.
      *
      * @param uid
      * @param pwd
+     * @param email
      * @return
      */
     @POST
